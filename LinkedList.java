@@ -1,10 +1,10 @@
 package linkedlist;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class LinkedList<T> implements Iterable<T> {
+
     private class ListNode<T> {
         private T payload;
         private ListNode<T> next;
@@ -12,6 +12,8 @@ public class LinkedList<T> implements Iterable<T> {
 
         public ListNode(T v) {
             this.payload = v;
+            this.next = null;
+            this.prev = null;
         }
     }
 
@@ -20,124 +22,255 @@ public class LinkedList<T> implements Iterable<T> {
     protected int size;
 
     public LinkedList() {
-        this.size =0;
-        this.backNode =null;
-        this.frontNode =null;
+        this.size = 0;
+        this.backNode = null;
+        this.frontNode = null;
 
     }
 
     public LinkedList(Iterable<? extends T> c) {
-        for(T value :Iterable) {
-            if(frontNode == null && backNode== null) {
-                frontNode = new Node<T>(value);
+        for(T value :c) {
+            if(frontNode == null ) {
+                frontNode = new ListNode<T>(value);
                 backNode = frontNode;
-            }else{
-                backNode.next= new Node<T>(value);
-                backNode =backNode.next;
+            } else if(frontNode==backNode) {
+                backNode= new ListNode <T>(value);
+                frontNode.next = backNode;
+                backNode.prev = frontNode;
+            } else{
+                ListNode<T> node= backNode;
+                backNode= new ListNode<T>(value);
+                backNode.prev= node;
+                node.next= backNode;
+
             }
-        }++size;
+        size++;
+        }
     }
 
     public T peekFront() {
-        if(LinkedList.size()==0) {
+        if(size == 0) {
             return null;
-        }else{
-            return frontNode;
+        } else {
+            return frontNode.payload;
         }
     }
 
     public T peekBack() {
-        if (LinkedList.size() ==0) {
+        if (size == 0) {
             return null;
-        }else{
-            return backNode;
+        } else {
+            return backNode.payload;
         }
     }
 
     public T popFront() {
-        /* YOUR CODE HERE */
+        if (this.size == 0) {
+            throw new NoSuchElementException();
+        } else {
+            return this.remove(0);
+        }
     }
 
     public T popBack() {
-        /* YOUR CODE HERE */
+        if (this.size == 0) {
+            throw new NoSuchElementException();
+        } else {
+            return this.remove(this.size - 1);
+        }
     }
 
     public void pushBack(T value) {
-        /* YOUR CODE HERE */
+        ListNode<T> newNode = new ListNode<T>(value);
+        newNode.next = null;
+        if (this.frontNode == null) {
+            newNode.prev = null;
+            this.frontNode = newNode;
+            this.backNode = newNode;
+        } else {
+            newNode.prev = this.backNode;
+            this.backNode.next = newNode;
+            this.backNode = newNode;
+        }
+        this.size++;
     }
 
     public void pushFront(T value) {
-        /* YOUR CODE HERE */
+        ListNode<T> newNode = new ListNode<T>(value);
+        newNode.prev = null;
+        if (this.size == 0) {
+            newNode.next = null;
+            this.frontNode = newNode;
+            this.backNode = newNode;
+        } else {
+            newNode.next = this.frontNode;
+            this.frontNode.prev = newNode;
+            this.frontNode = newNode;
+        }
+        this.size++;
     }
 
+
     public void add(T value) {
-        /* YOUR CODE HERE */
+        this.pushFront(value);
     }
 
     public void add(int index, T value) {
-        /* YOUR CODE HERE */
+        if (index < 0) {
+            throw new IndexOutOfBoundsException();
+        }else if(index == 0) {
+            this.pushFront(value);
+        }else if(index==size) {
+            this.pushBack(value);
+        }else {
+            ListNode<T> current= this.frontNode;
+            for (int i = 0; i < index; ++i) {
+                if (current != null) {
+                    current = current.next;
+                } else {
+                    throw new IndexOutOfBoundsException();
+                }
+            }
+            ListNode<T> temp = current;
+            current = new ListNode<T> (value);
+            current.next= temp;
+            current.prev= temp.prev;
+            temp.prev.next =current;
+            temp.prev= current;
+            ++this.size;
+        }
     }
 
     public T remove() {
-        /* YOUR CODE HERE */
+       return popFront();
     }
 
     public T remove(int index) {
-        /* YOUR CODE HERE */
+        if (index < 0) {
+            throw new IndexOutOfBoundsException();
+        } else {
+            ListNode<T> removeNode = this.frontNode;
+            for (int loop = 0; loop < index; loop++) {
+                if (removeNode.next == null) {
+                    throw new IndexOutOfBoundsException();
+                } else {
+                    removeNode = removeNode.next;
+                }
+            }
+            if (removeNode.prev != null) {
+                removeNode.prev.next = removeNode.next;
+            } else {
+                this.frontNode = removeNode.next;
+            }
+            if (removeNode.next != null) {
+                removeNode.next.prev = removeNode.prev;
+            } else {
+                this.backNode = removeNode.prev;
+            }
+            this.size--;
+            return removeNode.payload;
+        }
     }
 
     private void remove(ListNode<T> node) {
-        /* YOUR CODE HERE */
+
     }
 
-    public int size() {
+    public int size(){
         return this.size;
     }
 
     @Override
-    public Iterator<T> iterator() {
-        /* YOUR CODE HERE */
+    public Iterator<T> iterator(){
+        return new LinkedListIterator();
     }
 
     public class LinkedListIterator implements Iterator<T> {
-        /* YOUR CODE HERE */
+        private ListNode<T> itNode = frontNode;
+        private ListNode<T> prNode = null;
 
         @Override
         public boolean hasNext() {
-            /* YOUR CODE HERE */
+            return (itNode != null);
         }
 
         @Override
         public T next() {
-            /* YOUR CODE HERE */
+            T value = null;
+            if (this.itNode != null) {
+                value = this.itNode.payload;
+                this.prNode = this.itNode;
+                itNode = itNode.next;
+            } else {
+                throw new NoSuchElementException();
+            }
+            return value;
         }
 
         @Override
         public void remove() {
-            /* YOUR CODE HERE */
+            if (this.prNode != null) {
+                if (this.prNode.next != null) {
+                    this.prNode.next.prev = this.prNode.prev;
+                } else {
+                    backNode = this.prNode.prev;
+                }
+                if (this.prNode.prev != null) {
+                    this.prNode.prev.next = this.prNode.next;
+                } else {
+                    frontNode = this.prNode.next;
+                }
+                size--;
+            } else {
+                throw new IllegalStateException();
+            }
         }
+
     }
 
     public Iterator<T> reverseIterator() {
-        /* YOUR CODE HERE */
+        return new LinkedListReverseIterator();
     }
 
     public class LinkedListReverseIterator implements Iterator<T> {
-        /* YOUR CODE HERE */
+        private ListNode<T> itNode = backNode;
+        private ListNode<T> prNode = null;
 
         @Override
         public boolean hasNext() {
-            /* YOUR CODE HERE */
+            return (itNode != null);
         }
 
         @Override
         public T next() {
-            /* YOUR CODE HERE */
+            T value = null;
+            if (this.itNode != null) {
+                value = this.itNode.payload;
+                this.prNode = this.itNode;
+                this.itNode = this.itNode.prev;
+            } else {
+                throw new NoSuchElementException();
+            }
+            return value;
         }
 
         @Override
         public void remove() {
-            /* YOUR CODE HERE */
+            if (this.prNode != null) {
+                if (this.prNode.next != null) {
+                    this.prNode.next.prev = this.prNode.prev;
+                } else {
+                    backNode = this.prNode.prev;
+                }
+                if (this.prNode.prev != null) {
+                    this.prNode.prev.next = this.prNode.next;
+                } else {
+                    frontNode = this.prNode.next;
+                }
+                size--;
+            } else {
+                throw new IllegalStateException();
+            }
         }
     }
 

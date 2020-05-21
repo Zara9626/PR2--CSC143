@@ -8,19 +8,19 @@ public class Stack<T> {
     }
 
     public void push(T value) {
-        /* YOUR CODE HERE */
-    }
+         list.pushFront(value);
 
+    }
     public T pop() {
-        
-        return null;
+        return list.popFront();
     }
 
     public T peek() {
-        return null;
+        return list.peekFront();
     }
 
     public int size() {
-        return 0;
+        return list.size;
     }
 }
+
