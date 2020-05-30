@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class LinkedList<T> implements Iterable<T> {
-
+    // definition of the Node data structure
     private class ListNode<T> {
         private T payload;
         private ListNode<T> next;
@@ -28,6 +28,7 @@ public class LinkedList<T> implements Iterable<T> {
 
     }
 
+    // constructor using initial node as set up
     public LinkedList(Iterable<? extends T> c) {
         for(T value :c) {
             if(frontNode == null ) {
@@ -48,6 +49,7 @@ public class LinkedList<T> implements Iterable<T> {
         }
     }
 
+    // get reference to first element in linked list
     public T peekFront() {
         if(size == 0) {
             return null;
@@ -56,6 +58,7 @@ public class LinkedList<T> implements Iterable<T> {
         }
     }
 
+    // get reference to last element in linked list
     public T peekBack() {
         if (size == 0) {
             return null;
