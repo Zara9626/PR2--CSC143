@@ -29,7 +29,8 @@ public class LinkedList<T> implements Iterable<T> {
     }
 
     // constructor using initial node as set up
-    public LinkedList(Iterable<? extends T> c) {
+    // public LinkedList(Iterable<? extends T> c) {
+    public LinkedList(Iterable<T> c) {
         for(T value :c) {
             if(frontNode == null ) {
                 frontNode = new ListNode<T>(value);
